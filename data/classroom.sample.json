@@ -1,0 +1,41 @@
+{
+  "name": "さくら英語教室",
+  "address": "東京都世田谷区桜丘1-2-3",
+  "phone": "03-0000-0000",
+  "nearest": "小田急線 千歳船橋駅 徒歩5分",
+  "parking": "あり(2台)",
+  "courses": [
+    {
+      "id": "eigo-sho-low",
+      "name": "小学生英語(1〜3年)",
+      "gradeMin": 1,
+      "gradeMax": 3,
+      "monthlyFee": 8800,
+      "slots": [
+        { "id": "tue-16", "weekday": "火", "startAt": "16:00", "capacity": 6, "enrolled": 4, "updatedAt": "2026-08-01" },
+        { "id": "thu-17", "weekday": "木", "startAt": "17:00", "capacity": 6, "enrolled": 6, "updatedAt": "2026-08-01" },
+        { "id": "fri-16", "weekday": "金", "startAt": "16:00", "capacity": 6, "enrolled": 2, "updatedAt": "2026-03-01" }
+      ]
+    },
+    {
+      "id": "eigo-sho-high",
+      "name": "小学生英語(4〜6年)",
+      "gradeMin": 4,
+      "gradeMax": 6,
+      "monthlyFee": 9900,
+      "slots": [
+        { "id": "wed-17", "weekday": "水", "startAt": "17:00", "capacity": 8, "enrolled": 5, "updatedAt": "2026-08-05" }
+      ]
+    },
+    {
+      "id": "eikaiwa-chu",
+      "name": "中学生英会話",
+      "gradeMin": 7,
+      "gradeMax": 9,
+      "monthlyFee": 12100,
+      "slots": [
+        { "id": "sat-10", "weekday": "土", "startAt": "10:00", "capacity": 8, "enrolled": 3, "updatedAt": "2026-08-05" }
+      ]
+    }
+  ]
+}

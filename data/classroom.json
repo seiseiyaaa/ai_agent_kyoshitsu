@@ -1,0 +1,87 @@
+{
+  "_source": "https://akikoma.com/aoba-eikaiwa より 2026-08-12 時点",
+  "name": "あおば英会話教室",
+  "address": "東京都国分寺市本町2-3-4",
+  "phone": "042-000-1111",
+  "nearest": "JR中央線・西武線 国分寺駅から徒歩5分",
+  "parking": "近隣にコインパーキングあり",
+  "settings": {
+    "mode": "full",
+    "allowTour": true
+  },
+  "notes": [
+    "体験レッスンは無料",
+    "個別(マンツーマン)での体験レッスンは、先生と日程を調整のうえ対応できる",
+    "教室見学はいつでも歓迎。授業の時間に合わせて見学できる",
+    "兄弟姉妹で通う場合、2人目からは入学金が無料になる",
+    "入学金は5000円。教材費は別途"
+  ],
+  "students": [
+    { "name": "山本", "phone": "09055551111", "grade": "小3" },
+    { "name": "井上", "phone": "08044442222", "grade": "中1" }
+  ],
+  "courses": [
+    {
+      "id": "eikaiwa-yoji",
+      "name": "英語・英会話",
+      "gradeMin": 0,
+      "gradeMax": 0,
+      "monthlyFee": 8250,
+      "slots": [
+        { "id": "tue-1500", "weekday": "火", "startAt": "15:00", "capacity": 6, "availability": "空きあり", "updatedAt": "2026-08-12" }
+      ]
+    },
+    {
+      "id": "eikaiwa-sho-low",
+      "name": "英語・英会話",
+      "gradeMin": 1,
+      "gradeMax": 3,
+      "monthlyFee": 8250,
+      "slots": [
+        { "id": "wed-1600", "weekday": "水", "startAt": "16:00", "capacity": 8, "availability": "空きあり", "updatedAt": "2026-08-12" },
+        { "id": "fri-1600", "weekday": "金", "startAt": "16:00", "capacity": 8, "availability": "残りわずか", "updatedAt": "2026-08-12" }
+      ]
+    },
+    {
+      "id": "eikaiwa-sho-high",
+      "name": "英語・英会話",
+      "gradeMin": 4,
+      "gradeMax": 6,
+      "monthlyFee": 8250,
+      "slots": [
+        { "id": "wed-1710", "weekday": "水", "startAt": "17:10", "capacity": 8, "availability": "満席", "updatedAt": "2026-08-12" },
+        { "id": "fri-1710", "weekday": "金", "startAt": "17:10", "capacity": 8, "availability": "空きあり", "updatedAt": "2026-08-12" }
+      ]
+    },
+    {
+      "id": "eiken-sho-high",
+      "name": "英検実践トレーニング",
+      "gradeMin": 4,
+      "gradeMax": 6,
+      "monthlyFee": null,
+      "slots": [
+        { "id": "sat-1000", "weekday": "土", "startAt": "10:00", "capacity": 6, "availability": "空きあり", "updatedAt": "2026-08-12" }
+      ]
+    },
+    {
+      "id": "eikaiwa-chu",
+      "name": "英語・英会話",
+      "gradeMin": 7,
+      "gradeMax": 9,
+      "monthlyFee": 8250,
+      "slots": [
+        { "id": "thu-1900", "weekday": "木", "startAt": "19:00", "capacity": 8, "availability": "残りわずか", "updatedAt": "2026-08-12" }
+      ]
+    },
+    {
+      "id": "eiken-chu",
+      "name": "英検実践トレーニング",
+      "gradeMin": 7,
+      "gradeMax": 9,
+      "monthlyFee": null,
+      "slots": [
+        { "id": "sat-1110", "weekday": "土", "startAt": "11:10", "capacity": 6, "availability": "空きあり", "updatedAt": "2026-08-12" }
+      ]
+    }
+  ]
+}

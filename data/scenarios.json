@@ -1,0 +1,368 @@
+[
+  {
+    "id": "trial-basic",
+    "note": "素直な体験申込。小1〜3は1コースなので、そのまま空き枠の提示に進むこと",
+    "callerNumber": "09011112222",
+    "utterances": [
+      "ホームページを見たんですけど、体験レッスンをお願いしたくて",
+      "小学2年生です",
+      "水曜日でお願いします",
+      "はい、大丈夫です",
+      "田中と申します",
+      "はい、その番号で大丈夫です"
+    ],
+    "expect": {
+      "intent": "trial",
+      "grade": 2,
+      "booked": true,
+      "slotIncludes": "水曜",
+      "ends": true
+    }
+  },
+  {
+    "id": "trial-course-choice",
+    "note": "小4〜6は英会話と英検の2コースがある。どちらか聞いてから枠を出すこと",
+    "callerNumber": "08033334444",
+    "utterances": [
+      "小5の子の体験をお願いしたいのですが",
+      "英会話のほうでお願いします",
+      "金曜日で",
+      "はい",
+      "鈴木です",
+      "はい"
+    ],
+    "expect": {
+      "intent": "trial",
+      "grade": 5,
+      "booked": true,
+      "slotIncludes": "金曜"
+    }
+  },
+  {
+    "id": "trial-grade-bare",
+    "note": "§7.3「2年生」だけの表現を小2として扱えるか",
+    "callerNumber": "09055556666",
+    "utterances": [
+      "体験に興味があります",
+      "2年生です",
+      "金曜日はどうですか",
+      "はい",
+      "佐藤です",
+      "はい"
+    ],
+    "expect": {
+      "intent": "trial",
+      "grade": 2,
+      "slotIncludes": "金曜"
+    }
+  },
+  {
+    "id": "trial-preschool",
+    "note": "4・5歳児のコースがある。未就学でも受け付けられること",
+    "callerNumber": "09022223333",
+    "utterances": [
+      "体験を申し込みたいのですが",
+      "年長です",
+      "火曜日でお願いします",
+      "はい",
+      "中村です",
+      "はい"
+    ],
+    "expect": {
+      "intent": "trial",
+      "grade": 0,
+      "booked": true,
+      "slotIncludes": "火曜"
+    }
+  },
+  {
+    "id": "grade-correction",
+    "note": "「2年生」を小2と解釈したあとの「中学2年生」という言い直しを、どの段階でも受け付けること",
+    "callerNumber": "09012345678",
+    "utterances": [
+      "体験をお願いします",
+      "2年生。",
+      "中学2年生。",
+      "英会話でお願いします",
+      "木曜日で",
+      "はい",
+      "田中です",
+      "はい"
+    ],
+    "expect": {
+      "intent": "trial",
+      "grade": 8,
+      "booked": true,
+      "slotIncludes": "木曜",
+      "neverSays": "恐れ入ります、ご希望の曜日をもう一度"
+    }
+  },
+  {
+    "id": "slot-switch-on-confirm",
+    "note": "枠の確認中の「やっぱり金曜日で」という言い直しを受け付けること",
+    "callerNumber": "09023456789",
+    "utterances": [
+      "体験をお願いします",
+      "小学2年生です",
+      "水曜日で",
+      "やっぱり金曜日でお願いします",
+      "はい",
+      "森です",
+      "はい"
+    ],
+    "expect": {
+      "grade": 2,
+      "booked": true,
+      "slotIncludes": "金曜"
+    }
+  },
+  {
+    "id": "full-slot",
+    "note": "§3.3[3] 満席の水曜を指名されても断らず、希望として預かって仮予約にすること",
+    "callerNumber": "09066665555",
+    "utterances": [
+      "体験をお願いします",
+      "小学5年生です",
+      "英会話です",
+      "水曜日はありますか",
+      "村上です",
+      "はい"
+    ],
+    "expect": {
+      "grade": 5,
+      "neverSays": "水曜日の17時10分に空きがございます",
+      "booked": true,
+      "needsConsult": true
+    }
+  },
+  {
+    "id": "consult-time-not-in-timetable",
+    "note": "時間割に無い曜日を希望された場合。断らずに仮予約として預かること",
+    "callerNumber": "09077776666",
+    "utterances": [
+      "体験をお願いしたいのですが",
+      "小学2年生です",
+      "月曜日の夕方は空いていますか",
+      "小林です",
+      "はい"
+    ],
+    "expect": {
+      "grade": 2,
+      "booked": true,
+      "needsConsult": true,
+      "neverSays": "月曜"
+    }
+  },
+  {
+    "id": "question-fee",
+    "note": "§3.4 料金は答えてよい範囲",
+    "callerNumber": "09077778888",
+    "utterances": [
+      "月謝はおいくらですか",
+      "いえ、大丈夫です"
+    ],
+    "expect": {
+      "intent": "question",
+      "firstReplyIncludes": "8250",
+      "ends": true
+    }
+  },
+  {
+    "id": "question-location",
+    "note": "§3.4 場所とアクセスは答えてよい範囲",
+    "callerNumber": "09033332222",
+    "utterances": [
+      "場所はどちらになりますか",
+      "ありがとうございます、大丈夫です"
+    ],
+    "expect": {
+      "intent": "question",
+      "firstReplyIncludes": "国分寺",
+      "ends": true
+    }
+  },
+  {
+    "id": "question-out-of-scope",
+    "note": "§3.4 教材の詳細は答えず、1手目で連絡先の聴取へ逃がすこと",
+    "callerNumber": "09099990000",
+    "utterances": [
+      "使っている教材について詳しく教えてください",
+      "山田です",
+      "はい"
+    ],
+    "expect": {
+      "handedOff": true,
+      "firstReplyIncludes": "先生から",
+      "neverSays": "土曜日の10時",
+      "phone": "09099990000"
+    }
+  },
+  {
+    "id": "message-absence",
+    "note": "§3.1 在籍者の欠席連絡。伝言として受け、追加が無いか確かめて終えること",
+    "callerNumber": "09012341234",
+    "utterances": [
+      "いつもお世話になっております。今日は熱が出たので欠席します",
+      "いえ、大丈夫です"
+    ],
+    "expect": {
+      "intent": "message",
+      "booked": false,
+      "ends": true
+    }
+  },
+  {
+    "id": "sales",
+    "note": "§3.5 営業電話は判定して終話すること",
+    "callerNumber": "0312345678",
+    "utterances": [
+      "株式会社アドプロモーションと申します。集客支援のご提案でお電話しました"
+    ],
+    "expect": {
+      "intent": "sales",
+      "booked": false,
+      "ends": true
+    }
+  },
+  {
+    "id": "unclear-fallback",
+    "note": "§7.4 3回続けて意図が取れなければ連絡先の聴取へ切り替わること",
+    "callerNumber": "09088887777",
+    "utterances": [
+      "えーと",
+      "あの",
+      "うーん",
+      "高橋です",
+      "はい"
+    ],
+    "expect": {
+      "handedOff": true,
+      "phone": "09088887777"
+    }
+  },
+  {
+    "id": "phone-unreadable",
+    "note": "§7.3 番号が聞き取れなくても、発信者番号があれば折り返せること",
+    "callerNumber": "09044443333",
+    "utterances": [
+      "体験を申し込みたいです",
+      "中学1年生です",
+      "英会話で",
+      "木曜日で",
+      "はい",
+      "伊藤です",
+      "ごにょごにょ",
+      "えっと",
+      "うーん"
+    ],
+    "expect": {
+      "phone": "09044443333"
+    }
+  },
+  {
+    "id": "tour-instead-of-trial",
+    "note": "「体験じゃなくて見学」という言い直しを受け付け、見学として仮予約すること",
+    "callerNumber": "09066667777",
+    "utterances": [
+      "体験レッスンをお願いしたいのですが",
+      "あ、すみません、体験ではなくて教室の見学だけしたいんですが",
+      "小学2年生です",
+      "水曜日で",
+      "はい",
+      "岡田です",
+      "はい"
+    ],
+    "expect": {
+      "intent": "trial",
+      "visitType": "tour",
+      "grade": 2,
+      "booked": true,
+      "slotIncludes": "水曜"
+    }
+  },
+  {
+    "id": "course-correction",
+    "note": "枠選びに入ったあとの「やっぱり英検のほう」というコースの言い直しを受け付けること",
+    "callerNumber": "09011113333",
+    "utterances": [
+      "体験をお願いします",
+      "小学5年生です",
+      "英会話で",
+      "やっぱり英検のほうでお願いします",
+      "土曜日で",
+      "はい",
+      "近藤です",
+      "はい"
+    ],
+    "expect": {
+      "grade": 5,
+      "booked": true,
+      "slotIncludes": "土曜"
+    }
+  },
+  {
+    "id": "note-based-answer",
+    "note": "「個別で体験できますか」= 申込+質問。案内事項で答えてから予約の流れに入ること",
+    "callerNumber": "09022224444",
+    "utterances": [
+      "個別で体験レッスンをしてもらうことはできますか",
+      "小学3年生です",
+      "水曜日で",
+      "はい",
+      "石井です",
+      "はい"
+    ],
+    "expect": {
+      "intent": "trial",
+      "firstReplyIncludes": "調整",
+      "booked": true
+    }
+  },
+  {
+    "id": "note-not-covered",
+    "note": "案内事項に無い質問(教材の詳細)は、これまで通り先生に渡すこと",
+    "callerNumber": "09033335555",
+    "utterances": [
+      "教材の中身を詳しく教えてください",
+      "松本です",
+      "はい"
+    ],
+    "expect": {
+      "handedOff": true,
+      "firstReplyIncludes": "先生から"
+    }
+  },
+  {
+    "id": "known-student-message",
+    "note": "在籍生徒の登録番号からの着信は伝言として受け、追加が無いか確かめて終えること",
+    "callerNumber": "09055551111",
+    "utterances": [
+      "山本です。来週の水曜日、学校行事でお休みします",
+      "以上です"
+    ],
+    "expect": {
+      "intent": "message",
+      "knownStudent": "山本",
+      "ends": true
+    }
+  },
+  {
+    "id": "name-correction",
+    "note": "連絡先の確認中の「田中ではなく中田です」という氏名の言い直しを受け付けること",
+    "callerNumber": "09044446666",
+    "utterances": [
+      "体験をお願いします",
+      "小学2年生です",
+      "水曜日で",
+      "はい",
+      "田中です",
+      "すみません、田中ではなく中田です",
+      "はい"
+    ],
+    "expect": {
+      "grade": 2,
+      "booked": true,
+      "nameIs": "中田"
+    }
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "name": "phone-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "学習塾向け AI電話一次応答の検証実装(要件書 ai-phone-agent-spec.md)",
+  "scripts": {
+    "start": "node --env-file=.env.local server.mjs",
+    "replay": "node --env-file=.env.local scripts/replay.mjs",
+    "sim": "node --env-file=.env.local scripts/twilio-sim.mjs",
+    "check": "node --env-file=.env.local scripts/check-google.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
+    "@google-cloud/speech": "^8.0.0",
+    "@google-cloud/text-to-speech": "^7.0.0",
+    "google-auth-library": "^9.15.1",
+    "ws": "^8.18.0"
+  }
+}
