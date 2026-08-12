@@ -17,8 +17,26 @@
     "入学金は5000円。教材費は別途"
   ],
   "students": [
-    { "name": "山本", "phone": "09055551111", "grade": "小3" },
-    { "name": "井上", "phone": "08044442222", "grade": "中1" }
+    {
+      "name": "山本",
+      "phone": "09055551111",
+      "grade": "小3"
+    },
+    {
+      "name": "井上",
+      "phone": "08044442222",
+      "grade": "中1"
+    },
+    {
+      "name": "高橋",
+      "phone": "07011112222",
+      "grade": "小5"
+    },
+    {
+      "name": "渡辺",
+      "phone": "09033334444",
+      "grade": "年長"
+    }
   ],
   "courses": [
     {
@@ -28,7 +46,14 @@
       "gradeMax": 0,
       "monthlyFee": 8250,
       "slots": [
-        { "id": "tue-1500", "weekday": "火", "startAt": "15:00", "capacity": 6, "availability": "空きあり", "updatedAt": "2026-08-12" }
+        {
+          "id": "tue-1500",
+          "weekday": "火",
+          "startAt": "15:00",
+          "capacity": 6,
+          "availability": "空きあり",
+          "updatedAt": "2026-08-12"
+        }
       ]
     },
     {
@@ -38,8 +63,22 @@
       "gradeMax": 3,
       "monthlyFee": 8250,
       "slots": [
-        { "id": "wed-1600", "weekday": "水", "startAt": "16:00", "capacity": 8, "availability": "空きあり", "updatedAt": "2026-08-12" },
-        { "id": "fri-1600", "weekday": "金", "startAt": "16:00", "capacity": 8, "availability": "残りわずか", "updatedAt": "2026-08-12" }
+        {
+          "id": "wed-1600",
+          "weekday": "水",
+          "startAt": "16:00",
+          "capacity": 8,
+          "availability": "空きあり",
+          "updatedAt": "2026-08-12"
+        },
+        {
+          "id": "fri-1600",
+          "weekday": "金",
+          "startAt": "16:00",
+          "capacity": 8,
+          "availability": "残りわずか",
+          "updatedAt": "2026-08-12"
+        }
       ]
     },
     {
@@ -49,8 +88,22 @@
       "gradeMax": 6,
       "monthlyFee": 8250,
       "slots": [
-        { "id": "wed-1710", "weekday": "水", "startAt": "17:10", "capacity": 8, "availability": "満席", "updatedAt": "2026-08-12" },
-        { "id": "fri-1710", "weekday": "金", "startAt": "17:10", "capacity": 8, "availability": "空きあり", "updatedAt": "2026-08-12" }
+        {
+          "id": "wed-1710",
+          "weekday": "水",
+          "startAt": "17:10",
+          "capacity": 8,
+          "availability": "満席",
+          "updatedAt": "2026-08-12"
+        },
+        {
+          "id": "fri-1710",
+          "weekday": "金",
+          "startAt": "17:10",
+          "capacity": 8,
+          "availability": "空きあり",
+          "updatedAt": "2026-08-12"
+        }
       ]
     },
     {
@@ -60,7 +113,14 @@
       "gradeMax": 6,
       "monthlyFee": null,
       "slots": [
-        { "id": "sat-1000", "weekday": "土", "startAt": "10:00", "capacity": 6, "availability": "空きあり", "updatedAt": "2026-08-12" }
+        {
+          "id": "sat-1000",
+          "weekday": "土",
+          "startAt": "10:00",
+          "capacity": 6,
+          "availability": "空きあり",
+          "updatedAt": "2026-08-12"
+        }
       ]
     },
     {
@@ -70,7 +130,14 @@
       "gradeMax": 9,
       "monthlyFee": 8250,
       "slots": [
-        { "id": "thu-1900", "weekday": "木", "startAt": "19:00", "capacity": 8, "availability": "残りわずか", "updatedAt": "2026-08-12" }
+        {
+          "id": "thu-1900",
+          "weekday": "木",
+          "startAt": "19:00",
+          "capacity": 8,
+          "availability": "残りわずか",
+          "updatedAt": "2026-08-12"
+        }
       ]
     },
     {
@@ -80,7 +147,14 @@
       "gradeMax": 9,
       "monthlyFee": null,
       "slots": [
-        { "id": "sat-1110", "weekday": "土", "startAt": "11:10", "capacity": 6, "availability": "空きあり", "updatedAt": "2026-08-12" }
+        {
+          "id": "sat-1110",
+          "weekday": "土",
+          "startAt": "11:10",
+          "capacity": 6,
+          "availability": "空きあり",
+          "updatedAt": "2026-08-12"
+        }
       ]
     }
   ]

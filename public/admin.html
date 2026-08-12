@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>教室設定 — AI電話応答</title>
+    <style>
+      :root {
+        --bg: #f7f7f5;
+        --fg: #1c1c1a;
+        --muted: #6b6b66;
+        --line: #dedcd6;
+        --accent: #2f6f4f;
+        --warn: #a2431f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+        line-height: 1.7;
+      }
+      .wrap { max-width: 860px; margin: 0 auto; }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      h2 { font-size: 15px; margin: 0 0 4px; }
+      .lead { color: var(--muted); font-size: 13px; margin: 0 0 20px; }
+      .lead a { color: var(--accent); }
+      .panel {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .hint { font-size: 12px; color: var(--muted); margin: 2px 0 10px; }
+      table { border-collapse: collapse; width: 100%; font-size: 14px; }
+      th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #f0efea; }
+      th { color: var(--muted); font-weight: 600; font-size: 12px; white-space: nowrap; }
+      input[type="text"], select {
+        font: inherit;
+        padding: 6px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        width: 100%;
+        background: #fff;
+      }
+      input.short { width: 9em; }
+      label.opt { display: block; font-size: 14px; margin: 4px 0; }
+      button {
+        font: inherit;
+        padding: 8px 18px;
+        border-radius: 6px;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+      }
+      button.ghost {
+        background: #fff;
+        color: var(--fg);
+        border-color: var(--line);
+        padding: 4px 12px;
+        font-size: 13px;
+      }
+      button.del { border-color: var(--line); background: #fff; color: var(--warn); padding: 4px 10px; font-size: 13px; }
+      button:disabled { opacity: 0.4; cursor: not-allowed; }
+      .bar {
+        position: sticky;
+        bottom: 0;
+        background: var(--bg);
+        padding: 12px 0;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      #status { font-size: 13px; color: var(--muted); }
+      #status.ok { color: var(--accent); }
+      #status.err { color: var(--warn); white-space: pre-wrap; }
+      .slotline { display: flex; gap: 10px; align-items: center; padding: 4px 0; font-size: 14px; }
+      .slotline .when { min-width: 10em; }
+      .slotline select { width: 9em; }
+      .course-head { display: flex; gap: 12px; align-items: baseline; margin: 12px 0 2px; }
+      .course-head .fee { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+      .course-head input { width: 7em; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>教室設定</h1>
+      <p class="lead">
+        保存すると、<b>次の着信から</b>反映されます(通話中のものは変わりません)。
+        <a href="/">← 検証コンソールへ戻る</a>
+      </p>
+
+      <div class="panel">
+        <h2>応答のしかた</h2>
+        <label class="opt">
+          <input type="radio" name="mode" value="full" />
+          <b>おまかせ</b> — 空き枠の案内から仮予約まで AI が進める
+        </label>
+        <label class="opt">
+          <input type="radio" name="mode" value="reception" />
+          <b>受付のみ</b> — 用件と連絡先だけ預かり、案内は先生が折り返しで行う
+        </label>
+        <label class="opt" style="margin-top: 10px">
+          <input type="checkbox" id="allowTour" />
+          教室見学(授業を見るだけ)を受け付ける
+        </label>
+      </div>
+
+      <div class="panel">
+        <h2>在籍生徒</h2>
+        <p class="hint">
+          登録した電話番号からの着信は、予約の案内をせず「先生にお伝えします」の伝言モードで受けます。
+        </p>
+        <table>
+          <thead>
+            <tr><th>お名前</th><th>電話番号</th><th>学年</th><th></th></tr>
+          </thead>
+          <tbody id="students"></tbody>
+        </table>
+        <button class="ghost" id="addStudent" style="margin-top: 8px">＋ 生徒を追加</button>
+      </div>
+
+      <div class="panel">
+        <h2>AIが答えてよい案内事項</h2>
+        <p class="hint">
+          ここに書いたことは、先生の代わりに AI がそのまま答えます(例:「体験レッスンは無料」
+          「個別での体験は日程調整のうえ対応できる」)。書いていないことを聞かれたら、答えずに先生へ渡します。
+        </p>
+        <table><tbody id="notes"></tbody></table>
+        <button class="ghost" id="addNote" style="margin-top: 8px">＋ 案内事項を追加</button>
+      </div>
+
+      <div class="panel">
+        <h2>コースと空き状況</h2>
+        <p class="hint">
+          「満席」の枠は案内に出ません。空き状況を変えると更新日が今日になり、
+          60日以上更新の無い枠は「空きあり」でも案内されなくなります(情報の鮮度管理)。
+        </p>
+        <div id="courses"></div>
+      </div>
+
+      <div class="bar">
+        <button id="save">保存する</button>
+        <span id="status"></span>
+      </div>
+    </div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const AVAIL_OPTIONS = ["空きあり", "残りわずか", "満席"];
+      /** 英語表記(open/few/full)でも受けられるようにしておく */
+      const AVAIL_JA = { open: "空きあり", few: "残りわずか", full: "満席" };
+
+      let doc = null;           // サーバから受け取った生JSON。未知のフィールドは触らず保持する
+      let originalAvail = [];   // 空き状況の変更検知用(変わった枠だけ更新日を今日にする)
+
+      function studentRow(s = { name: "", phone: "", grade: "" }) {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          '<td><input type="text" class="s-name" placeholder="山本" /></td>' +
+          '<td><input type="text" class="s-phone short" placeholder="09012345678" /></td>' +
+          '<td><input type="text" class="s-grade short" placeholder="小3" /></td>' +
+          '<td><button class="del">削除</button></td>';
+        tr.querySelector(".s-name").value = s.name ?? "";
+        tr.querySelector(".s-phone").value = s.phone ?? "";
+        tr.querySelector(".s-grade").value = s.grade ?? "";
+        tr.querySelector(".del").onclick = () => tr.remove();
+        return tr;
+      }
+
+      function noteRow(text = "") {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          '<td><input type="text" class="n-text" placeholder="例: 体験レッスンは無料" /></td>' +
+          '<td style="width:1%"><button class="del">削除</button></td>';
+        tr.querySelector(".n-text").value = text;
+        tr.querySelector(".del").onclick = () => tr.remove();
+        return tr;
+      }
+
+      function render() {
+        const mode = doc.settings?.mode === "reception" ? "reception" : "full";
+        document.querySelector(`input[name="mode"][value="${mode}"]`).checked = true;
+        $("allowTour").checked = doc.settings?.allowTour !== false;
+
+        $("students").replaceChildren(...(doc.students ?? []).map(studentRow));
+        $("notes").replaceChildren(...(doc.notes ?? []).map(noteRow));
+
+        const wrap = $("courses");
+        wrap.replaceChildren();
+        originalAvail = [];
+        (doc.courses ?? []).forEach((course, ci) => {
+          const head = document.createElement("div");
+          head.className = "course-head";
+          const target =
+            course.gradeMin === course.gradeMax
+              ? gradeLabel(course.gradeMin)
+              : `${gradeLabel(course.gradeMin)}〜${gradeLabel(course.gradeMax)}`;
+          head.innerHTML =
+            `<h2>${escapeHtml(course.name)} <span style="color:var(--muted);font-weight:normal;font-size:13px">(${target})</span></h2>` +
+            `<span class="fee">月謝 <input type="text" class="fee-input" data-ci="${ci}" placeholder="要問合" /> 円</span>`;
+          head.querySelector(".fee-input").value = course.monthlyFee ?? "";
+          wrap.appendChild(head);
+
+          (course.slots ?? []).forEach((slot, si) => {
+            const line = document.createElement("div");
+            line.className = "slotline";
+            const current = AVAIL_JA[slot.availability] ?? slot.availability ?? "空きあり";
+            originalAvail.push({ ci, si, value: current });
+            line.innerHTML =
+              `<span class="when">${escapeHtml(slot.weekday)}曜 ${escapeHtml(slot.startAt)}</span>` +
+              `<select data-ci="${ci}" data-si="${si}">` +
+              AVAIL_OPTIONS.map((o) => `<option${o === current ? " selected" : ""}>${o}</option>`).join("") +
+              `</select>` +
+              `<span class="hint" style="margin:0">更新日 ${escapeHtml(slot.updatedAt ?? "-")}</span>`;
+            wrap.appendChild(line);
+          });
+        });
+      }
+
+      function gradeLabel(g) {
+        if (g === 0) return "未就学";
+        if (g <= 6) return `小${g}`;
+        return `中${g - 6}`;
+      }
+
+      function escapeHtml(s) {
+        return String(s ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+      }
+
+      function collect() {
+        doc.settings = {
+          ...(doc.settings ?? {}),
+          mode: document.querySelector('input[name="mode"]:checked').value,
+          allowTour: $("allowTour").checked,
+        };
+        doc.students = [...$("students").querySelectorAll("tr")]
+          .map((tr) => ({
+            name: tr.querySelector(".s-name").value.trim(),
+            phone: tr.querySelector(".s-phone").value.replace(/\D/g, ""),
+            grade: tr.querySelector(".s-grade").value.trim(),
+          }))
+          .filter((s) => s.name || s.phone);
+        doc.notes = [...$("notes").querySelectorAll(".n-text")]
+          .map((el) => el.value.trim())
+          .filter(Boolean);
+
+        const today = new Date().toISOString().slice(0, 10);
+        document.querySelectorAll(".fee-input").forEach((el) => {
+          const fee = el.value.replace(/\D/g, "");
+          doc.courses[Number(el.dataset.ci)].monthlyFee = fee ? Number(fee) : null;
+        });
+        document.querySelectorAll(".slotline select").forEach((el) => {
+          const ci = Number(el.dataset.ci);
+          const si = Number(el.dataset.si);
+          const before = originalAvail.find((o) => o.ci === ci && o.si === si)?.value;
+          doc.courses[ci].slots[si].availability = el.value;
+          // 空き状況を触った枠は「今日確認した」とみなす(§4.3 の鮮度)
+          if (el.value !== before) doc.courses[ci].slots[si].updatedAt = today;
+        });
+        return doc;
+      }
+
+      async function load() {
+        const res = await fetch("/admin/api/classroom");
+        const body = await res.json();
+        doc = body.data;
+        if (body.sheetMode) {
+          $("save").disabled = true;
+          setStatus("err", "スプレッドシート運用中のため、ここからは編集できません");
+        }
+        render();
+      }
+
+      function setStatus(cls, text) {
+        const el = $("status");
+        el.className = cls;
+        el.textContent = text;
+      }
+
+      $("addStudent").onclick = () => $("students").appendChild(studentRow());
+      $("addNote").onclick = () => $("notes").appendChild(noteRow());
+
+      $("save").onclick = async () => {
+        $("save").disabled = true;
+        setStatus("", "保存しています…");
+        try {
+          const res = await fetch("/admin/api/classroom", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(collect()),
+          });
+          const body = await res.json();
+          if (!res.ok) {
+            setStatus("err", (body.details?.length ? body.details : [body.error]).join("\n"));
+          } else {
+            setStatus("ok", "保存しました。次の着信から反映されます。");
+            await load();
+          }
+        } catch (e) {
+          setStatus("err", `保存に失敗しました: ${e.message}`);
+        } finally {
+          $("save").disabled = false;
+        }
+      };
+
+      load().catch((e) => setStatus("err", `読み込みに失敗しました: ${e.message}`));
+    </script>
+  </body>
+</html>

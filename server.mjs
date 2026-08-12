@@ -16,7 +16,12 @@ import { fileURLToPath } from "node:url";
 import { GoogleAuth } from "google-auth-library";
 import { WebSocketServer } from "ws";
 
-import { loadClassroom } from "./lib/classroom.mjs";
+import {
+  isSheetMode,
+  loadClassroom,
+  loadClassroomRaw,
+  saveClassroomRaw,
+} from "./lib/classroom.mjs";
 import { isConfigured as isClaudeConfigured } from "./lib/claude.mjs";
 import {
   begin,
@@ -70,11 +75,64 @@ process.on("unhandledRejection", (err) => {
 });
 
 await requireGoogleCredentials();
-const classroom = await loadClassroom();
+/** 管理画面から保存されたら差し替える。通話中のセッションは古いまま、次の着信から新しい設定 */
+let classroom = await loadClassroom();
 
 // ---- HTTP(画面と録音の受け取り) ----
 
+function sendJsonResponse(res, status, obj) {
+  res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
+  res.end(JSON.stringify(obj));
+}
+
 const server = http.createServer(async (req, res) => {
+  // ---- 管理画面(教室設定の閲覧・編集) ----
+  if (req.url === "/admin" || req.url === "/admin/") {
+    res.writeHead(302, { Location: "/admin.html" });
+    res.end();
+    return;
+  }
+  if (req.url === "/admin/api/classroom") {
+    if (req.method === "GET") {
+      const { file, raw } = await loadClassroomRaw();
+      sendJsonResponse(res, 200, { file, sheetMode: isSheetMode(), data: raw });
+      return;
+    }
+    if (req.method === "PUT") {
+      if (isSheetMode()) {
+        sendJsonResponse(res, 409, {
+          error: "スプレッドシート(CLASSROOM_SHEET_ID)運用中のため、ここからは編集できません",
+        });
+        return;
+      }
+      const chunks = [];
+      for await (const c of req) chunks.push(c);
+      let body;
+      try {
+        body = JSON.parse(Buffer.concat(chunks).toString());
+      } catch {
+        sendJsonResponse(res, 400, { error: "JSONとして読めませんでした" });
+        return;
+      }
+      try {
+        await saveClassroomRaw(body);
+      } catch (err) {
+        sendJsonResponse(res, 422, { error: err.message, details: err.validation ?? [] });
+        return;
+      }
+      classroom = await loadClassroom();
+      // 新しい教室データから決まる文を作り直す。待たせない(次の通話までに済めばよい)
+      warmUp([
+        ...Object.values(FIXED_LINES),
+        openingLine(classroom),
+        ...predictableLines(classroom),
+      ]).catch((err) => console.warn("[tts] 再合成に失敗:", err.message));
+      console.log(`[設定] 教室データを更新しました(生徒${classroom.students.length}名、案内事項${classroom.notes.length}件)`);
+      sendJsonResponse(res, 200, { ok: true });
+      return;
+    }
+  }
+
   /**
    * Twilio からの着信通知。ここで「音声をこのWebSocketに流してくれ」と返す。
    * 公開URLは固定できない(トンネルを張り直すと変わる)ので、
