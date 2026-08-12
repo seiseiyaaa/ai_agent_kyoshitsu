@@ -150,7 +150,7 @@
       "grade": 2,
       "booked": true,
       "needsConsult": true,
-      "neverSays": "月曜"
+      "neverSays": "月曜日の16時に空きがございます"
     }
   },
   {
@@ -314,7 +314,7 @@
     ],
     "expect": {
       "intent": "trial",
-      "firstReplyIncludes": "調整",
+      "firstReplyIncludes": "個別",
       "booked": true
     }
   },
@@ -381,8 +381,28 @@
       "intent": "trial",
       "grade": 3,
       "booked": true,
-      "firstReplyIncludes": "無料",
-      "saidIncludes": "ご安心"
+      "saidIncludes": "無料"
+    }
+  },
+  {
+    "id": "siblings",
+    "note": "ごきょうだい2人の同時体験。1人目を消さず両方記録し、日時は先生に調整させること",
+    "callerNumber": "09088886666",
+    "utterances": [
+      "体験をお願いしたいのですが",
+      "小学5年生です",
+      "英語英会話なんですけど、小学2年生の子もいるので合わせて体験をしたいです",
+      "佐藤です",
+      "はい"
+    ],
+    "expect": {
+      "intent": "trial",
+      "grade": 5,
+      "booked": true,
+      "needsConsult": true,
+      "siblings": [
+        "小学2年生"
+      ]
     }
   }
 ]

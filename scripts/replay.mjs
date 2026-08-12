@@ -59,6 +59,9 @@ function check(expect, summary, said, state) {
   if (expect.knownStudent && summary.knownStudent !== expect.knownStudent) {
     failures.push(`在籍判定=${summary.knownStudent || "なし"}(期待 ${expect.knownStudent})`);
   }
+  if (expect.siblings && JSON.stringify(summary.siblingGrades) !== JSON.stringify(expect.siblings)) {
+    failures.push(`ごきょうだい=${JSON.stringify(summary.siblingGrades)}(期待 ${JSON.stringify(expect.siblings)})`);
+  }
   if (expect.nameIs && summary.name !== expect.nameIs) {
     failures.push(`氏名=${summary.name}(期待 ${expect.nameIs})`);
   }
