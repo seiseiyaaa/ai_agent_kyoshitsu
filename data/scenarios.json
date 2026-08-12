@@ -364,5 +364,25 @@
       "booked": true,
       "nameIs": "中田"
     }
+  },
+  {
+    "id": "empathy-hesitation",
+    "note": "「迷ってる」には質問の前に一言添える(スクリーンショット報告の再現)。そのまま予約まで進めること",
+    "callerNumber": "09077779999",
+    "utterances": [
+      "無料体験をやろうか迷ってるんだよね",
+      "小学校3年生、まだ英語は初心者で少し不安です",
+      "水曜日で",
+      "はい",
+      "青木です",
+      "はい"
+    ],
+    "expect": {
+      "intent": "trial",
+      "grade": 3,
+      "booked": true,
+      "firstReplyIncludes": "無料",
+      "saidIncludes": "ご安心"
+    }
   }
 ]

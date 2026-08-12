@@ -166,15 +166,27 @@
         $("rate").textContent = `${within}/${latencies.length}`;
       }
 
+      /** 再生中の音声。被せ(バージイン)で途中停止できるように持っておく */
+      let current = null;
+
+      function stopPlayback() {
+        if (!current) return;
+        current.el.pause();
+        current.resolve();
+        current = null;
+      }
+
       async function playAudio(base64) {
         if (!base64) return;
+        stopPlayback(); // 前の再生が残っていたら止める
         const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
         const url = URL.createObjectURL(new Blob([bytes], { type: "audio/mpeg" }));
         const el = new Audio(url);
         await new Promise((resolve) => {
-          el.onended = resolve;
-          el.onerror = resolve;
-          el.play().catch(resolve);
+          current = { el, resolve };
+          el.onended = () => { current = null; resolve(); };
+          el.onerror = () => { current = null; resolve(); };
+          el.play().catch(() => { current = null; resolve(); });
         });
         URL.revokeObjectURL(url);
       }
@@ -233,6 +245,11 @@
             if (msg.latencyMs != null) addMetric(lastHeard, msg.latencyFromSpeechEndMs, msg.ttsMs);
             await playAudio(msg.audio);
             ws.send(JSON.stringify({ type: "playback-done" }));
+            return;
+          }
+          if (msg.type === "interrupt") {
+            // 話し始めたのでAIが黙る(被せ)
+            stopPlayback();
             return;
           }
           if (msg.type === "state") {

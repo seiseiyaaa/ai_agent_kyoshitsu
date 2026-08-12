@@ -204,10 +204,28 @@ wss.on("connection", (ws, req) => {
   /** 発話が切れた時刻。ここから音声を返すまでが §1.3「応答の遅延」 */
   let utteranceEndAt = 0;
   let busy = false;
+  /** クライアントがAIの音声を再生中か。再生中の発話は「被せ」として扱う */
+  let playing = false;
+  /** いま読み上げている文。認識結果が自声の回り込みかどうかの判定に使う */
+  let speakingText = "";
 
   const send = (obj) => ws.readyState === ws.OPEN && ws.send(JSON.stringify(obj));
 
-  /** 文を合成して送る。再生中は認識を止め、自分の声を拾わないようにする */
+  /**
+   * 認識結果が、いま自分が読み上げている文の聞き取りではないか。
+   * ブラウザのエコーキャンセルは完全ではなく、スピーカーの音を拾うことがある。
+   * 被せ(バージイン)を許すには、この振り分けが要る。
+   */
+  function looksLikeEcho(heard) {
+    if (!speakingText) return false;
+    const norm = (t) => String(t).replace(/[、。．！？!?\s]/g, "");
+    const h = norm(heard);
+    const sp = norm(speakingText);
+    if (h.length < 4) return true; // 再生中の短い切れ端はノイズ扱い
+    return sp.includes(h) || sp.includes(h.slice(0, 6));
+  }
+
+  /** 文を合成して送る。認識は止めない(被せを受け付けるため) */
   async function speak(text, { measure = false } = {}) {
     const t0 = Date.now();
     let audio = null;
@@ -218,7 +236,8 @@ wss.on("connection", (ws, req) => {
     }
     const latencyMs = measure && utteranceEndAt ? Date.now() - utteranceEndAt : null;
 
-    recognizer?.setMuted(true);
+    playing = true;
+    speakingText = text;
     send({
       type: "say",
       text,
@@ -230,8 +249,23 @@ wss.on("connection", (ws, req) => {
     });
   }
 
+  /** 応答を考えている間に届いた発話。捨てると長い発話の後半が消える */
+  let pendingUtterances = [];
+
   async function onUtterance(text) {
-    if (!session || busy || session.state === "DONE") return;
+    if (!session || session.state === "DONE") return;
+    if (busy) {
+      pendingUtterances.push(text);
+      return;
+    }
+    if (playing) {
+      // AIの発話中に声が届いた。自声の回り込みなら捨て、本物なら被せとして
+      // 再生を打ち切って聞く側に回る
+      if (looksLikeEcho(text)) return;
+      send({ type: "interrupt" });
+      playing = false;
+      speakingText = "";
+    }
     busy = true;
     utteranceEndAt = Date.now();
     send({ type: "heard", text });
@@ -246,6 +280,12 @@ wss.on("connection", (ws, req) => {
       await speak(FIXED_LINES.fallback);
     } finally {
       busy = false;
+      // 考えている間に届いていた発話をまとめて処理する
+      if (pendingUtterances.length > 0 && session && session.state !== "DONE") {
+        const queued = pendingUtterances.join("、");
+        pendingUtterances = [];
+        await onUtterance(queued);
+      }
     }
   }
 
@@ -284,8 +324,8 @@ wss.on("connection", (ws, req) => {
       return;
     }
     if (msg.type === "playback-done") {
-      // 再生が終わってから認識を再開する
-      recognizer?.setMuted(false);
+      playing = false;
+      speakingText = "";
       if (session) send({ type: "state", state: session.state });
       return;
     }

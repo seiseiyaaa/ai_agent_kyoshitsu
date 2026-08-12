@@ -77,6 +77,9 @@ function check(expect, summary, said, state) {
   if (expect.handedOff && !saidAll.includes("お名前")) {
     failures.push("連絡先の聴取に移っていない");
   }
+  if (expect.saidIncludes && !saidAll.includes(norm(expect.saidIncludes))) {
+    failures.push(`通話全体に「${expect.saidIncludes}」が無い`);
+  }
   if (expect.neverSays && saidAll.includes(norm(expect.neverSays))) {
     failures.push(`言ってはいけない案内をした: ${expect.neverSays}`);
   }
